@@ -1,6 +1,8 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 let csrfToken = "";
 
+export const apiBaseUrl = API_BASE_URL;
+
 export type Practice = {
   id: string;
   name: string;

@@ -67,6 +67,12 @@ select {
   gap: 16px;
 }
 
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -214,6 +220,10 @@ select {
   }
 
   .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-grid {
     grid-template-columns: 1fr;
   }
 

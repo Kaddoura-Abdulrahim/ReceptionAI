@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { api, AppointmentRequest, AssistantConfig, AuditLog, BillingSubscription, CalendarConfig, CallSummary, Location, Member, Practice, PracticeInvite, Role, VoiceProviderConfig } from "../lib/api";
+import { api, apiBaseUrl, AppointmentRequest, AssistantConfig, AuditLog, BillingSubscription, CalendarConfig, CallSummary, Location, Member, Practice, PracticeInvite, Role, VoiceProviderConfig } from "../lib/api";
 
 export default function Home() {
   const [mode, setMode] = useState<"login" | "register">("register");
@@ -650,6 +650,39 @@ export default function Home() {
             </div>
             <button className="button" disabled={loading}>Save voice provider</button>
           </form>
+          <div className="setup-grid" style={{ marginTop: 16 }}>
+            <div className="field">
+              <label>Practice ID</label>
+              <input value={selectedPracticeId} readOnly />
+            </div>
+            <div className="field">
+              <label>Provider base URL</label>
+              <input value={apiBaseUrl} readOnly />
+            </div>
+            <div className="field">
+              <label>Auth header name</label>
+              <input value="X-DentalDesk-Webhook-Secret" readOnly />
+            </div>
+            <div className="field">
+              <label>Auth header value</label>
+              <input value="Use VAPI_WEBHOOK_SECRET from Render" readOnly />
+            </div>
+            <div className="field wide">
+              <label>Bootstrap body</label>
+              <textarea value={JSON.stringify({ practiceId: selectedPracticeId }, null, 2)} readOnly />
+            </div>
+            <div className="field wide">
+              <label>Tool URLs</label>
+              <textarea
+                value={[
+                  `${apiBaseUrl}/v1/voice/practice-info`,
+                  `${apiBaseUrl}/v1/voice/appointment-request`,
+                  `${apiBaseUrl}/v1/voice/call-summary`,
+                ].join("\n")}
+                readOnly
+              />
+            </div>
+          </div>
           <form className="grid" onSubmit={runVoiceTestCall} style={{ marginTop: 16 }}>
             <div className="field">
               <label>Test caller name</label>
