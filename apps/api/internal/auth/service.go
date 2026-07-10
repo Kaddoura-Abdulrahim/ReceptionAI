@@ -153,7 +153,7 @@ func (s *Service) SetSessionCookie(w http.ResponseWriter, token string) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: s.sameSiteMode(),
 		Secure:   s.secureCookies,
 		Expires:  time.Now().UTC().Add(30 * 24 * time.Hour),
 	})
@@ -165,11 +165,18 @@ func (s *Service) ClearSessionCookie(w http.ResponseWriter) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: s.sameSiteMode(),
 		Secure:   s.secureCookies,
 		Expires:  time.Unix(0, 0),
 		MaxAge:   -1,
 	})
+}
+
+func (s *Service) sameSiteMode() http.SameSite {
+	if s.secureCookies {
+		return http.SameSiteNoneMode
+	}
+	return http.SameSiteLaxMode
 }
 
 func (s *Service) NewCSRFToken() (string, error) {

@@ -131,7 +131,7 @@ func (s *Server) csrf(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSiteMode(s.cfg.AppEnv == "production"),
 		Secure:   s.cfg.AppEnv == "production",
 		Expires:  time.Now().UTC().Add(12 * time.Hour),
 	})
@@ -1013,4 +1013,11 @@ func (s *Server) withCORS(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func sameSiteMode(secure bool) http.SameSite {
+	if secure {
+		return http.SameSiteNoneMode
+	}
+	return http.SameSiteLaxMode
 }
