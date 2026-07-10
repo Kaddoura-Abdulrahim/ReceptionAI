@@ -23,6 +23,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup -S dentaldesk && adduser -S dentaldesk -G dentaldesk
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
+COPY apps/web/render-start.sh /app/render-start.sh
+RUN chmod +x /app/render-start.sh
 USER dentaldesk
 EXPOSE 3000
-CMD ["node", "apps/web/server.js"]
+CMD ["/app/render-start.sh"]
