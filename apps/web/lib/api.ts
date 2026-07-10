@@ -142,6 +142,10 @@ export type AuditLog = {
 };
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return requestWithCSRF<T>(path, init, true);
+}
+
+async function requestWithCSRF<T>(path: string, init: RequestInit = {}, retryCSRF: boolean): Promise<T> {
   const method = (init.method ?? "GET").toUpperCase();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -159,6 +163,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: "Request failed" }));
+    if (retryCSRF && body.error === "csrf token required") {
+      csrfToken = "";
+      return requestWithCSRF<T>(path, init, false);
+    }
     throw new Error(body.error ?? "Request failed");
   }
 

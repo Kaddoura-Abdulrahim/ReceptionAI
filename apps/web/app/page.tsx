@@ -11,6 +11,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [practices, setPractices] = useState<Practice[]>([]);
   const [selectedPracticeId, setSelectedPracticeId] = useState("");
   const [practiceName, setPracticeName] = useState("Downtown Dental");
@@ -180,6 +181,7 @@ export default function Home() {
         await api.login({ email, password });
       }
       const nextPractices = await api.practices();
+      setIsAuthenticated(true);
       setPractices(nextPractices);
       setSelectedPracticeId(nextPractices[0]?.id ?? "");
     } catch (err) {
@@ -209,6 +211,7 @@ export default function Home() {
     setLoading(true);
     try {
       const practice = await api.createPractice(practiceName);
+      setIsAuthenticated(true);
       setPractices((current) => [practice, ...current]);
       setSelectedPracticeId(practice.id);
     } catch (err) {
@@ -481,7 +484,7 @@ export default function Home() {
     }
   }
 
-  if (practices.length === 0) {
+  if (!isAuthenticated) {
     return (
       <main className="auth-page">
         <section className="panel auth-card">
@@ -523,6 +526,25 @@ export default function Home() {
             >
               {mode === "register" ? "Use existing account" : "Create new account"}
             </button>
+          </form>
+        </section>
+      </main>
+    );
+  }
+
+  if (practices.length === 0) {
+    return (
+      <main className="auth-page">
+        <section className="panel auth-card">
+          <h1>DentalDesk AI</h1>
+          <p className="muted">Create the first practice workspace for this account.</p>
+          <form className="stack" onSubmit={createPractice}>
+            <div className="field">
+              <label>Practice name</label>
+              <input value={practiceName} onChange={(event) => setPracticeName(event.target.value)} />
+            </div>
+            {error && <div className="error">{error}</div>}
+            <button className="button" disabled={loading}>Create practice</button>
           </form>
         </section>
       </main>
